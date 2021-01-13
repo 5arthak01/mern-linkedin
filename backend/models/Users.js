@@ -9,11 +9,16 @@ const UserSchema = new Schema({
 	},
 	email: {
 		type: String,
+		required: true,
+		unique: true
+	},
+	password: {
+		type: String,
 		required: true
 	},
-	date:{
+	registration_date:{
 		type: Date,
-		required: false
+		default: Date.now
 	}
 });
 
