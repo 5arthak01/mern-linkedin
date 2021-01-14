@@ -1,37 +1,58 @@
-const express = require("express");
+require('dotenv').config();
+
+const express = require('express');
 const router = express.Router();
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const jwt_secret = require("../keys").jwt_secret;
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const auth = require('../middleware/auth');
 
 // Load User model
-const User = require("../models/Users");
+const User = require('../models/Users');
 
-// GET request
-// Getting all the users
-router.get("/", function (req, res) {
+// GET /user
+// @desc Getting all the users
+// @access public
+router.get('/', function (req, res) {
 	User.find(function (error, users) {
 		if (error) {
 			console.log(error);
 		} else {
 			res.json(users);
 		}
-	});
+	}).select('-password');
 });
 
-// POST request
-// Add a user to db
-router.post("/register", (req, res) => {
+// GET /user/get_user
+// @desc Get user data from jwt token
+// @access private
+router.get('/get_user', auth, (req, res) => {
+	User.findById(req.user) // may have to use req.user.id
+		.select('-password')
+		.then((user) => {
+			return res.status(200).json(user);
+		})
+		.catch((error) => {
+			console.log(error);
+			return res
+				.status(400)
+				.json({ msg: 'User not found or an error occured' });
+		});
+});
+
+// POST /user/register
+// @desc Add a user to database
+// @access public
+router.post('/register', (req, res) => {
 	const { name, email, password, date } = req.body;
 	if (!name || !email || !password) {
-		return res.status(400).json({ msg: "Enter all fields" });
+		return res.status(400).json({ msg: 'Enter all fields' });
 	}
 
 	// Check if user already exists
 	User.findOne({ email }).then((user) => {
 		if (user) {
 			return res.status(400).json({
-				msg: "Email already in use"
+				msg: 'Email already in use'
 			});
 		}
 	});
@@ -48,7 +69,7 @@ router.post("/register", (req, res) => {
 			newUser
 				.save()
 				.then((user) => {
-					jwt.sign(user.id, jwt_secret, (error, token) => {
+					jwt.sign(user.id, process.env.JWTSecret, (error, token) => {
 						if (error) throw error;
 						return res.status(200).json({
 							token,
@@ -67,12 +88,13 @@ router.post("/register", (req, res) => {
 	});
 });
 
-// POST request
-// Login route (public)
-router.post("/login", (req, res) => {
+// POST /user/login
+// @desc Login with user email and password
+// @access public
+router.post('/login', (req, res) => {
 	const { email, password } = req.body;
 	if (!email || !password) {
-		return res.status(400).json({ msg: "Enter all fields" });
+		return res.status(400).json({ msg: 'Enter all fields' });
 	}
 
 	// Find user by email
@@ -80,7 +102,7 @@ router.post("/login", (req, res) => {
 		// Check if user exists
 		if (!user) {
 			return res.status(400).json({
-				error: "User not found"
+				error: 'User not found'
 			});
 		}
 
@@ -89,11 +111,9 @@ router.post("/login", (req, res) => {
 			.compare(password, user.password)
 			.then((isMatch) => {
 				if (!isMatch) {
-					return res
-						.status(400)
-						.json({ error: "Invalid credentials" });
+					return res.status(400).json({ error: 'Invalid credentials' });
 				} else {
-					jwt.sign(user.id, jwt_secret, (error, token) => {
+					jwt.sign(user.id, process.env.JWTSecret, (error, token) => {
 						if (error) throw error;
 						res.status(200).json({
 							token,
@@ -107,7 +127,6 @@ router.post("/login", (req, res) => {
 				}
 			})
 			.catch((error) => {
-				console.log(error);
 				res.status(400).json(error);
 			});
 	});
