@@ -1,26 +1,75 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css"
+import React, { useEffect } from 'react';
+import { Route, Switch } from 'react-router-dom';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
+import Cookies from 'js-cookie';
 
-import UsersList from './components/Users/UsersList'
-import Home from './components/Common/Home'
-import Register from './components/Common/Register'
-import Navbar from './components/templates/Navbar'
-import Profile from './components/Users/Profile'
+import Login from './pages/Login/Login';
+import Register from './pages/Register/Register';
+import Home from './pages/Home/Home';
+import Profile from './pages/Profile/Profile';
+import Users from './pages/Users/Users';
+import NotFound from './pages/NotFound/NotFound';
 
-function App() {
-  return (
-    <Router>
-      <div className="container">
-        <Navbar/>
-        <br/>
-        <Route path="/" exact component={Home}/>
-        <Route path="/users" exact component={UsersList}/>
-        <Route path="/register" component={Register}/>
-        <Route path="/profile" component={Profile}/>
-      </div>
-    </Router>
-  );
-}
+import Loader from './components/Loader/Loader';
 
-export default App;
+import { logInUserWithOauth, loadMe } from './store/actions/authActions';
+
+const App = ({ logInUserWithOauth, auth, loadMe }) => {
+	useEffect(() => {
+		loadMe();
+	}, [loadMe]);
+
+	useEffect(() => {
+		if (window.location.hash === '#_=_') window.location.hash = '';
+
+		const cookieJwt = Cookies.get('x-auth-cookie');
+		if (cookieJwt) {
+			Cookies.remove('x-auth-cookie');
+			logInUserWithOauth(cookieJwt);
+		}
+	}, []);
+
+	useEffect(() => {
+		if (
+			!auth.appLoaded &&
+			!auth.isLoading &&
+			auth.token &&
+			!auth.isAuthenticated
+		) {
+			loadMe();
+		}
+	}, [
+		auth.isAuthenticated,
+		auth.token,
+		loadMe,
+		auth.isLoading,
+		auth.appLoaded
+	]);
+
+	return (
+		<>
+			{auth.appLoaded ? (
+				<Switch>
+					<Route path="/login" component={Login} />
+					<Route path="/register" component={Register} />
+					<Route path="/users" component={Users} />
+					<Route path="/notfound" component={NotFound} />
+					<Route exact path="/:username" component={Profile} />
+					<Route exact path="/" component={Home} />
+					<Route component={NotFound} />
+				</Switch>
+			) : (
+				<Loader />
+			)}
+		</>
+	);
+};
+
+const mapStateToProps = (state) => ({
+	auth: state.auth
+});
+
+export default compose(
+	connect(mapStateToProps, { logInUserWithOauth, loadMe })
+)(App);

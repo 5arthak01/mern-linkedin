@@ -1,20 +1,17 @@
+require('dotenv').config();
+
 const express = require('express');
 const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
 const PORT = process.env.PORT || 4000;
-const DB_NAME = 'tutorial';
-
-// routes
-var testAPIRouter = require('./routes/testAPI');
-var UserRouter = require('./routes/User');
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Connection to MongoDB
-mongoose.connect('mongodb://127.0.0.1:27017/' + DB_NAME, {
+mongoose.connect(process.env.MONGO_URI, {
 	useNewUrlParser: true,
 	useCreateIndex: true,
 	useUnifiedTopology: true
@@ -24,7 +21,13 @@ connection.once('open', function () {
 	console.log('MongoDB database connection established successfully !');
 });
 
+// routes
+var testAPIRouter = require('./routes/testAPI');
+var UserRouter = require('./routes/User');
+var authRouter = require('./routes/auth');
+
 // setup API endpoints
+app.use('/', authRouter);
 app.use('/testAPI', testAPIRouter);
 app.use('/user', UserRouter);
 

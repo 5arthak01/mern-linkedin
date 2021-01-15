@@ -1,6 +1,4 @@
 // User authentication by jwt token
-require('dotenv').config();
-
 const jwt = require('jsonwebtoken');
 
 function auth(res, req, next) {
@@ -17,7 +15,7 @@ function auth(res, req, next) {
 
 		// verify token
 		try {
-			var decoded_token = jwt.verify(token, process.env.JWTSecret);
+			var decoded_token = jwt.verify(token, process.env.JWT_SECRET);
 			if (!decoded_token) {
 				return res.res.status(401).json({ msg: 'Authorisation failed' });
 			}

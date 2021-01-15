@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
@@ -7,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const auth = require('../middleware/auth');
 
 // Load User model
-const User = require('../models/Users');
+const User = require('../models/User');
 
 // GET /user
 // @desc Getting all the users
@@ -69,7 +67,7 @@ router.post('/register', (req, res) => {
 			newUser
 				.save()
 				.then((user) => {
-					jwt.sign(user.id, process.env.JWTSecret, (error, token) => {
+					jwt.sign(user.id, process.env.JWT_SECRET, (error, token) => {
 						if (error) throw error;
 						return res.status(200).json({
 							token,
@@ -113,7 +111,7 @@ router.post('/login', (req, res) => {
 				if (!isMatch) {
 					return res.status(400).json({ error: 'Invalid credentials' });
 				} else {
-					jwt.sign(user.id, process.env.JWTSecret, (error, token) => {
+					jwt.sign(user.id, process.env.JWT_SECRET, (error, token) => {
 						if (error) throw error;
 						res.status(200).json({
 							token,
