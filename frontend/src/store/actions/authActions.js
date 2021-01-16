@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { SERVER_URI } from '../../constants';
 
 import {
 	LOGIN_WITH_OAUTH_LOADING,
@@ -18,7 +19,7 @@ export const loadMe = () => async (dispatch, getState) => {
 
 	try {
 		const options = attachTokenToHeaders(getState);
-		const response = await axios.get('/api/users/me', options);
+		const response = await axios.get(SERVER_URI + '/api/users/me', options);
 
 		dispatch({
 			type: ME_SUCCESS,
@@ -38,7 +39,9 @@ export const loginUserWithEmail = (formData, history) => async (
 ) => {
 	dispatch({ type: LOGIN_WITH_EMAIL_LOADING });
 	try {
-		const response = await axios.post('/auth/login', formData);
+		const response = await axios.post(SERVER_URI + '/auth/login', formData);
+
+		console.log('In authaction');
 
 		dispatch({
 			type: LOGIN_WITH_EMAIL_SUCCESS,

@@ -1,7 +1,7 @@
-import multer from 'multer';
-import { resolve } from 'path';
-import requireJwtAuth from '../../middleware/requireJwtAuth';
-import User, { hashPassword, validateUser } from '../../models/User';
+const multer = require('multer');
+const resolve = require('path').resolve;
+const requireJwtAuth = require('../../middleware/requireJwtAuth');
+const { User, hashPassword, validateUser } = require('../../models/User');
 
 const router = require('express').Router();
 
@@ -147,4 +147,4 @@ router.delete('/:id', requireJwtAuth, async (req, res) => {
 	}
 });
 
-export default router;
+module.exports = router;

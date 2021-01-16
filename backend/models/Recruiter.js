@@ -1,8 +1,8 @@
-import fs from 'fs';
-import { join } from 'path';
+const fs = require('fs');
+const join = require('path').join;
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-import bcrypt from 'bcryptjs';
+const bcrypt = require('bcryptjs');
 const Joi = require('joi');
 
 // Create Schema

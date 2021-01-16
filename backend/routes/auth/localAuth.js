@@ -27,7 +27,7 @@ router.post('/register', async (req, res, next) => {
 		}
 
 		try {
-			const newUser = await new User({
+			const newUser = new User({
 				provider: 'email',
 				email,
 				password,
@@ -38,7 +38,7 @@ router.post('/register', async (req, res, next) => {
 
 			newUser.registerUser(newUser, (err, user) => {
 				if (err) throw err;
-				res.json({ message: 'Registration successful.' }); // just redirect to login
+				res.status(200).json({ message: 'Registration successful.' }); // just redirect to login
 			});
 		} catch (err) {
 			return next(err);

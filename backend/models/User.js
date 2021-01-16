@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const bcrypt = require('bcryptjs');
 const Joi = require('joi');
+const jwt = require('jsonwebtoken');
 
 // Create Schema
 const UserSchema = new Schema({
@@ -28,7 +29,7 @@ const UserSchema = new Schema({
 		type: String,
 		required: true,
 		minlength: 6,
-		maxlength: 20
+		maxlength: 60
 	},
 	registration_date: {
 		type: Date,
@@ -140,3 +141,4 @@ const validateUser = (user) => {
 module.exports.validateUser = validateUser;
 const User = mongoose.model('Users', UserSchema);
 module.exports = User;
+module.exports.User = User;

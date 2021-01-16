@@ -1,7 +1,7 @@
 require('dotenv').config();
-
 const express = require('express');
 const app = express();
+const passport = require('passport');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const PORT = process.env.PORT || 4000;
@@ -26,10 +26,15 @@ var testAPIRouter = require('./routes/testAPI');
 var UserRouter = require('./routes/User');
 var authRouter = require('./routes/auth');
 
-// setup API endpoints
 app.use('/', authRouter);
 app.use('/testAPI', testAPIRouter);
 app.use('/user', UserRouter);
+
+// Setup passportjs authorisation
+app.use(passport.initialize());
+require('./services/jwtStrategy');
+require('./services/googleStrategy');
+require('./services/localStrategy');
 
 app.listen(PORT, function () {
 	console.log('Server is running on Port: ' + PORT);

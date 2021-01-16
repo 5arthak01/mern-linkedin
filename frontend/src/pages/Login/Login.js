@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link, withRouter, Redirect } from 'react-router-dom';
 
-import { useFormik } from 'formik';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { UncontrolledAlert } from 'reactstrap';
 
+import { useFormik } from 'formik';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -12,13 +14,13 @@ import { GOOGLE_AUTH_LINK } from '../../constants';
 import { loginSchema } from './validation';
 import './styles.css';
 
-const Login = ({ auth, history, loginUserWithEmail }) => {
+const Login = ({ register, auth, history, loginUserWithEmail }) => {
 	const formik = useFormik({
 		initialValues: {
 			email: '',
 			password: ''
 		},
-		validationSchema: loginSchema,
+		// validationSchema: loginSchema,
 		onSubmit: (values) => {
 			loginUserWithEmail(values, history);
 		}
@@ -26,9 +28,20 @@ const Login = ({ auth, history, loginUserWithEmail }) => {
 
 	if (auth.isAuthenticated) return <Redirect to="/" />;
 
+	// To display an alert for successful registration when redirected from registration page
+	var display_alert =
+		register.successful_email_registration === true
+			? { visibility: 'visible' }
+			: { display: 'none' };
+
 	return (
-		<div className="login">
+		<div className="login container">
 			<div className="container">
+				<UncontrolledAlert color="success" style={display_alert}>
+					User registered successfully! You can login now or later as you
+					please.
+				</UncontrolledAlert>
+
 				<h1>Log in page</h1>
 				<p>
 					back to{' '}
@@ -37,12 +50,14 @@ const Login = ({ auth, history, loginUserWithEmail }) => {
 					</Link>
 				</p>
 				<form onSubmit={formik.handleSubmit}>
-					<h2>Log in with social media</h2>
 					<a className="google btn" href={GOOGLE_AUTH_LINK}>
 						<i className="fa fa-google fa-fw" />
 						Login with Google
 					</a>
-					<h2>Login with email address</h2>
+					<br />
+					<h2>OR</h2>
+					<br />
+					<h4>Login with email address</h4>
 					<div>
 						<input
 							placeholder="Email address"
@@ -93,7 +108,8 @@ const Login = ({ auth, history, loginUserWithEmail }) => {
 
 const mapStateToProps = (state) => ({
 	auth: state.auth,
-	errors: state.errors
+	errors: state.errors,
+	register: state.register
 });
 
 export default compose(

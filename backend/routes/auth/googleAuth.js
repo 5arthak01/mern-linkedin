@@ -1,7 +1,7 @@
 // Google user authentication using passport
 
 const router = require('express').Router();
-import passport from 'passport';
+const passport = require('passport');
 
 router.get(
 	'/google',
@@ -23,4 +23,4 @@ router.get(
 	}
 );
 
-export default router;
+module.exports = router;

@@ -12,7 +12,7 @@ export const registerUserWithEmail = (formData, history) => async (
 ) => {
 	dispatch({ type: REGISTER_WITH_EMAIL_LOADING });
 	try {
-		await axios.post('https://localhost:4000/auth/register', formData);
+		await axios.post('http://localhost:4000/auth/register', formData);
 		dispatch({
 			type: REGISTER_WITH_EMAIL_SUCCESS
 		});
