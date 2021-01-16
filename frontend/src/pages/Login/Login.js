@@ -1,8 +1,15 @@
 import React from 'react';
 import { Link, withRouter, Redirect } from 'react-router-dom';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { UncontrolledAlert } from 'reactstrap';
+import {
+	UncontrolledAlert,
+	Button,
+	Form,
+	FormGroup,
+	Label,
+	Input,
+	FormText
+} from 'reactstrap';
 
 import { useFormik } from 'formik';
 import { compose } from 'redux';
@@ -20,7 +27,7 @@ const Login = ({ register, auth, history, loginUserWithEmail }) => {
 			email: '',
 			password: ''
 		},
-		// validationSchema: loginSchema,
+		validationSchema: loginSchema,
 		onSubmit: (values) => {
 			loginUserWithEmail(values, history);
 		}
@@ -41,29 +48,28 @@ const Login = ({ register, auth, history, loginUserWithEmail }) => {
 					User registered successfully! You can login now or later as you
 					please.
 				</UncontrolledAlert>
-
-				<h1>Log in page</h1>
-				<p>
-					back to{' '}
-					<Link className="bold" to="/">
-						Home page
-					</Link>
-				</p>
-				<form onSubmit={formik.handleSubmit}>
-					<a className="google btn" href={GOOGLE_AUTH_LINK}>
-						<i className="fa fa-google fa-fw" />
-						Login with Google
-					</a>
-					<br />
-					<h2>OR</h2>
-					<br />
+				<br />
+				<div>
+					<h1 style={{ textAlign: 'center' }}>Log in page</h1>
+					<p style={{ textAlign: 'center' }}>
+						back to{' '}
+						<Link className="bold" to="/">
+							Home page
+						</Link>
+					</p>
+				</div>
+				<br />
+				<br />
+				<Form onSubmit={formik.handleSubmit}>
 					<h4>Login with email address</h4>
-					<div>
-						<input
+					<FormGroup>
+						<Label for="Email_field">Email</Label>
+						<Input
 							placeholder="Email address"
 							name="email"
 							className="text"
 							type="text"
+							id="Email_field"
 							onChange={formik.handleChange}
 							onBlur={formik.handleBlur}
 							value={formik.values.email}
@@ -71,10 +77,12 @@ const Login = ({ register, auth, history, loginUserWithEmail }) => {
 						{formik.touched.email && formik.errors.email ? (
 							<p className="error">{formik.errors.email}</p>
 						) : null}
-						<input
+						<Label for="Pass_field">Password</Label>
+						<Input
 							placeholder="Password"
 							name="password"
 							type="password"
+							id="Pass_field"
 							className="text"
 							onChange={formik.handleChange}
 							onBlur={formik.handleBlur}
@@ -83,24 +91,33 @@ const Login = ({ register, auth, history, loginUserWithEmail }) => {
 						{formik.touched.password && formik.errors.password ? (
 							<p className="error">{formik.errors.password}</p>
 						) : null}
-					</div>
+					</FormGroup>
 					{auth.error && <p className="error">{auth.error}</p>}
-					<div>
-						<button
-							className="btn submit"
-							disabled={auth.isLoading || !formik.isValid}
-							type="submit"
-						>
-							Log in
-						</button>
-					</div>
-					<div>
-						Don't have an account?{' '}
+					<Button
+						className="btn submit"
+						disabled={auth.isLoading || !formik.isValid}
+						type="submit"
+					>
+						Log in
+					</Button>
+					<br />
+					<h2 style={{ textAlign: 'center' }}>OR</h2>
+					<br />
+					<FormGroup>
+						<a className="google btn" href={GOOGLE_AUTH_LINK}>
+							<i className="fa fa-google fa-fw" />
+							Login with Google
+						</a>
+					</FormGroup>
+					<br />
+					<br />
+					<div style={{ textAlign: 'center' }}>
+						Don't have an account and don't want to authenticate through Google?{' '}
 						<Link className="bold" to="/register">
 							Register
 						</Link>
 					</div>
-				</form>
+				</Form>
 			</div>
 		</div>
 	);

@@ -41,8 +41,6 @@ export const loginUserWithEmail = (formData, history) => async (
 	try {
 		const response = await axios.post(SERVER_URI + '/auth/login', formData);
 
-		console.log('In authaction');
-
 		dispatch({
 			type: LOGIN_WITH_EMAIL_SUCCESS,
 			payload: { token: response.data.token, me: response.data.me }
@@ -67,7 +65,7 @@ export const logInUserWithOauth = (token) => async (dispatch, getState) => {
 			'x-auth-token': token
 		};
 
-		const response = await axios.get('/api/users/me', { headers });
+		const response = await axios.get(SERVER_URI + '/api/users/me', { headers });
 
 		dispatch({
 			type: LOGIN_WITH_OAUTH_SUCCESS,
@@ -95,7 +93,7 @@ export const logOutUser = (history) => async (dispatch) => {
 		}
 
 		//just to log user out on the server
-		await axios.get('/auth/logout');
+		await axios.get(SERVER_URI + '/auth/logout');
 
 		dispatch({
 			type: LOGOUT_SUCCESS

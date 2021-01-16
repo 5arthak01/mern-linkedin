@@ -1,59 +1,73 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
+import {
+	Collapse,
+	Navbar as Navbarstrap,
+	NavbarToggler,
+	NavbarBrand,
+	Nav,
+	NavItem,
+	NavLink,
+	NavbarText
+} from 'reactstrap';
 
 import { logOutUser } from '../../store/actions/authActions';
-import './styles.css';
 
 const Navbar = ({ auth, logOutUser, history }) => {
-  const onLogOut = (event) => {
-    event.preventDefault();
-    logOutUser(history);
-  };
+	const onLogOut = (event) => {
+		event.preventDefault();
+		logOutUser(history);
+	};
 
-  return (
-    <nav className="navbar">
-      <h2 className="logo">MERN Boilerplate</h2>
-      <ul className="nav-links flex-1">
-        <li className="nav-item">
-          <Link to="/">Home</Link>
-        </li>
-        {auth.isAuthenticated ? (
-          <>
-            <li className="nav-item">
-              <Link to="/users">Users</Link>
-            </li>
-            <li className="nav-item">
-              <Link to={`/${auth.me.username}`}>Profile</Link>
-            </li>
-            {auth.me?.role === 'ADMIN' && (
-              <li className="nav-item">
-                <Link to="/admin">Admin</Link>
-              </li>
-            )}
-            <li className="flex-1" />
-            <img className="avatar" src={auth.me.avatar} />
-            <li className="nav-item" onClick={onLogOut}>
-              <a href="#">Log out</a>
-            </li>
-          </>
-        ) : (
-          <>
-            <li className="flex-1" />
+	// for reactstrap
+	const [isOpen, setIsOpen] = useState(false);
+	const toggle = () => setIsOpen(!isOpen);
 
-            <li className="nav-item">
-              <Link to="/login">Login</Link>
-            </li>
-          </>
-        )}
-      </ul>
-    </nav>
-  );
+	return (
+		<Navbarstrap className="navbar-dark bg-dark navbar-expand-md">
+			<NavbarBrand>Linkedin't</NavbarBrand>
+			<NavbarToggler onClick={toggle} />
+
+			<Collapse isOpen={isOpen} navbar>
+				<Nav className="mr-auto" navbar>
+						<NavItem>
+							<NavLink href="/">Home</NavLink>
+            			</NavItem>
+						{auth.isAuthenticated ? (
+							<>
+								<NavItem>
+						  	  		<NavLink href="/users">Users</NavLink>
+                				</NavItem>
+                				<NavItem>
+						  	  		<NavLink href={`/${auth.me.username}`}>Profile</NavLink>
+                				</NavItem>
+                				<NavItem>
+								  	<img className="avatar" alt="avatar" src={auth.me.avatar} />
+                				</NavItem>
+                				<NavItem>
+									<NavbarText><a href="#" onClick={onLogOut}>Log out</a></NavbarText>
+                				</NavItem>
+							</>
+						) : (
+							<>
+								<NavItem>
+							  	  <NavLink href="/login">Login</NavLink>
+                				</NavItem>
+							</>
+						)}
+				</Nav>
+			</Collapse>
+		</Navbarstrap>
+	);
 };
 
 const mapStateToProps = (state) => ({
-  auth: state.auth,
+	auth: state.auth
 });
 
-export default compose(withRouter, connect(mapStateToProps, { logOutUser }))(Navbar);
+export default compose(
+	withRouter,
+	connect(mapStateToProps, { logOutUser })
+)(Navbar);
