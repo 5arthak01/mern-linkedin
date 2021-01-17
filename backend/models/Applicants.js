@@ -47,7 +47,7 @@ const ApplicantSchema = new Schema({
 	education: {
 		type: [
 			{
-				institute: { type: String, required: true },
+				institute: { type: String, required: true, maxlength: 200 },
 				startYear: {
 					type: Number,
 					required: true,

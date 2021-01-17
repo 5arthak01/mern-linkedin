@@ -5,8 +5,6 @@ import { Link } from 'react-router-dom';
 
 import Layout from '../../layout/Layout';
 
-import './styles.css';
-
 const Home = ({ auth }) => {
 	return (
 		<Layout>
@@ -16,12 +14,12 @@ const Home = ({ auth }) => {
 					<div>
 						<p>
 							Welcome guest!{' '}
-							<Link className="bold" to="/login">
-								Log in
+							<Link to="/login">
+								<b>Log in</b>
 							</Link>{' '}
 							or{' '}
-							<Link className="bold" to="/register">
-								Register
+							<Link to="/register">
+								<b>Register</b>
 							</Link>
 						</p>
 					</div>

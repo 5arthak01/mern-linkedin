@@ -15,6 +15,11 @@ const UserSchema = new Schema({
 		match: [/^[a-zA-Z0-9_]+$/, 'is invalid'],
 		index: true
 	},
+	role: {
+		type: String,
+		enum: ['applicant', 'recruiter'],
+		required: true
+	},
 	name: {
 		type: String,
 		required: true
@@ -24,14 +29,14 @@ const UserSchema = new Schema({
 		required: true,
 		unique: true
 	},
-	avatar: String, // profile picture
+	avatar: { type: String }, // profile picture
 	password: {
 		type: String,
 		required: true,
 		minlength: 6,
 		maxlength: 60
 	},
-	registration_date: {
+	registrationDate: {
 		type: Date,
 		default: Date.now
 	},
@@ -44,6 +49,37 @@ const UserSchema = new Schema({
 		type: String,
 		unique: true,
 		sparse: true
+	},
+	education: {
+		type: [
+			{
+				institute: { type: String, maxlength: 200 },
+				startYear: {
+					type: Number,
+					min: 1900,
+					max: 2022
+				},
+				endYear: {
+					type: Number,
+					required: false,
+					min: 1900,
+					max: 2030
+				}
+			}
+		]
+	},
+	skills: {
+		type: [String]
+	},
+	rating: {
+		type: Number,
+		min: 0,
+		max: 5
+	},
+	bio: {
+		type: String,
+		default: '',
+		maxlength: 250
 	}
 });
 
@@ -66,13 +102,35 @@ UserSchema.methods.toJSON = function () {
 		: `${process.env.IMAGES_FOLDER_PATH}avatar0.jpg`;
 	// if profile picture does not exist, avatar0.jpg by default
 
+	if (this.role == 'applicant') {
+		return {
+			id: this._id,
+			provider: this.provider,
+			email: this.email,
+			username: this.username,
+			avatar: avatar,
+			name: this.name,
+			role: this.role,
+			education: this.education,
+			skills: this.skills,
+			rating: this.rating,
+			createdAt: this.createdAt,
+			updatedAt: this.updatedAt
+		};
+	}
+
 	return {
 		id: this._id,
 		provider: this.provider,
 		email: this.email,
 		username: this.username,
 		avatar: avatar,
-		name: this.name
+		name: this.name,
+		role: this.role,
+		registrationDate: this.registrationDate,
+		bio: this.bio,
+		createdAt: this.createdAt,
+		updatedAt: this.updatedAt
 	};
 };
 
@@ -125,7 +183,7 @@ async function hashPassword(password) {
 module.exports.hashedPassword = hashPassword;
 
 const validateUser = (user) => {
-	const schema = {
+	const applicant_schema = {
 		avatar: Joi.any(),
 		name: Joi.string().min(2).max(30).required(),
 		username: Joi.string()
@@ -133,11 +191,43 @@ const validateUser = (user) => {
 			.max(20)
 			.regex(/^[a-zA-Z0-9_]+$/)
 			.required(),
-		password: Joi.string().min(6).max(20).allow('').allow(null)
+		password: Joi.string().min(6).max(20).allow('').allow(null),
+		education: Joi.array()
+			.items(
+				Joi.object.keys({
+					institute: Joi.string().max(200).required(),
+					startYear: Joi.number().min(1900).max(2021).required(),
+					endYear: Joi.number().min(1900).max(2030).optional
+				})
+			)
+			.required(),
+		skills: Joi.array().items(Joi.string()).required(),
+		rating: Joi.number().min(0).max(5).optional
 	};
 
-	return Joi.validate(user, schema);
+	const recruiter_schema = {
+		avatar: Joi.any(),
+		name: Joi.string().min(2).max(30).required(),
+		username: Joi.string()
+			.min(2)
+			.max(20)
+			.regex(/^[a-zA-Z0-9_]+$/)
+			.required(),
+		password: Joi.string().min(6).max(20).allow('').allow(null),
+		bio: Joi.string().max(250).allow(''),
+		registrationDate: Joi.date()
+	};
+
+	switch (user.role) {
+		case 'applicant':
+			return Joi.validate(user, applicant_schema);
+		case 'recruiter':
+			return Joi.validate(user, recruiter_schema);
+		default:
+			return false;
+	}
 };
+
 module.exports.validateUser = validateUser;
 const User = mongoose.model('Users', UserSchema);
 module.exports = User;

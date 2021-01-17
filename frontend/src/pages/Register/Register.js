@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import { useFormik } from 'formik';
-
+import { Container } from 'reactstrap';
 import { registerUserWithEmail } from '../../store/actions/registerActions';
 import { registerSchema } from './validation';
 import './styles.css';
@@ -34,7 +34,7 @@ const Register = ({
 
 	return (
 		<div className="register">
-			<div className="container">
+			<Container>
 				<h1>Register page</h1>
 				<p>
 					back to{' '}
@@ -112,7 +112,7 @@ const Register = ({
 						</Link>
 					</div>
 				</form>
-			</div>
+			</Container>
 		</div>
 	);
 };

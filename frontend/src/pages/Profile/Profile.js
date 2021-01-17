@@ -16,6 +16,7 @@ import Loader from '../../components/Loader/Loader';
 import requireAuth from '../../hoc/requireAuth';
 import { profileSchema } from './validation';
 
+import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import './styles.css';
 
 const Profile = ({
@@ -97,27 +98,27 @@ const Profile = ({
 						<img src={image ? image : profile.avatar} className="avatar" />
 						<div className="info-container">
 							<div>
-								<span className="label">Provider: </span>
+								<span className="Label">Provider: </span>
 								<span className="info">{profile.provider}</span>
 							</div>
 							<div>
-								<span className="label">Role: </span>
+								<span className="Label">Role: </span>
 								<span className="info">{profile.role}</span>
 							</div>
 							<div>
-								<span className="label">Name: </span>
+								<span className="Label">Name: </span>
 								<span className="info">{profile.name}</span>
 							</div>
 							<div>
-								<span className="label">Username: </span>
+								<span className="Label">Username: </span>
 								<span className="info">{profile.username}</span>
 							</div>
 							<div>
-								<span className="label">Email: </span>
+								<span className="Label">Email: </span>
 								<span className="info">{profile.email}</span>
 							</div>
 							<div>
-								<span className="label">Joined: </span>
+								<span className="Label">Joined: </span>
 								<span className="info">
 									{moment(profile.createdAt).format(
 										'dddd, MMMM Do YYYY, H:mm:ss'
@@ -125,14 +126,14 @@ const Profile = ({
 								</span>
 							</div>
 							<div>
-								<button
+								<Button
 									className="btn"
-									type="button"
+									type="Button"
 									onClick={handleClickEdit}
 									disabled={!(me?.username === profile.username)}
 								>
 									{isEdit ? 'Cancel' : 'Edit'}
-								</button>
+								</Button>
 							</div>
 						</div>
 					</div>
@@ -142,29 +143,37 @@ const Profile = ({
 
 				{isEdit && (
 					<div className="form">
-						<form onSubmit={formik.handleSubmit}>
-							<div>
-								<label>Avatar:</label>
-								<input name="image" type="file" onChange={onChange} />
+						<Form onSubmit={formik.handleSubmit}>
+							<FormGroup>
+								<Label for="Avatar">Avatar:</Label>
+								<Input
+									id="Avatar"
+									name="image"
+									type="file"
+									onChange={onChange}
+								/>
 								{image && (
-									<button
+									<Button
 										className="btn"
 										onClick={() => {
 											setImage(null);
 											setAvatar(null);
 										}}
-										type="button"
+										type="Button"
 									>
 										Remove Image
-									</button>
+									</Button>
 								)}
-							</div>
-							<input name="id" type="hidden" value={formik.values.id} />
-							<div className="input-div">
-								<label>Name:</label>
-								<input
+							</FormGroup>
+							<FormGroup>
+								<Input name="id" type="hidden" value={formik.values.id} />
+							</FormGroup>
+							<FormGroup>
+								<Label for="name">Name:</Label>
+								<Input
 									placeholder="Name"
 									name="name"
+									id="name"
 									className=""
 									type="text"
 									onChange={formik.handleChange}
@@ -174,12 +183,13 @@ const Profile = ({
 								{formik.touched.name && formik.errors.name ? (
 									<p className="error">{formik.errors.name}</p>
 								) : null}
-							</div>
-							<div className="input-div">
-								<label>Username:</label>
-								<input
+							</FormGroup>
+							<FormGroup>
+								<Label for="username">Username:</Label>
+								<Input
 									placeholder="Username"
 									name="username"
+									id="username"
 									className=""
 									type="text"
 									onChange={formik.handleChange}
@@ -189,13 +199,14 @@ const Profile = ({
 								{formik.touched.username && formik.errors.username ? (
 									<p className="error">{formik.errors.username}</p>
 								) : null}
-							</div>
+							</FormGroup>
 							{profile.provider === 'email' && (
-								<div className="input-div">
-									<label>Password:</label>
-									<input
+								<FormGroup>
+									<Label for="password">Password:</Label>
+									<Input
 										placeholder="Password"
 										name="password"
+										id="password"
 										className=""
 										type="password"
 										onChange={formik.handleChange}
@@ -205,19 +216,19 @@ const Profile = ({
 									{formik.touched.password && formik.errors.password ? (
 										<p className="error">{formik.errors.password}</p>
 									) : null}
-								</div>
+								</FormGroup>
 							)}
-							<button type="submit" className="btn">
+							<Button type="submit" className="btn">
 								Save
-							</button>
-							<button
+							</Button>
+							<Button
 								onClick={() => handleDeleteUser(profile.id, history)}
-								type="button"
+								type="Button"
 								className="btn"
 							>
 								Delete profile
-							</button>
-						</form>
+							</Button>
+						</Form>
 					</div>
 				)}
 			</div>

@@ -71,13 +71,30 @@ router.put(
 					.json({ message: 'An account with this username already exists.' });
 			}
 
-			const updatedUser = {
-				avatar: avatarPath,
-				name: req.body.name,
-				username: req.body.username,
-				password
-			};
-
+			var updatedUser = '';
+			switch (req.body.role) {
+				case 'applicant':
+					updatedUser = {
+						avatar: avatarPath,
+						name: req.body.name,
+						username: req.body.username,
+						password,
+						role: req.body.role,
+						education: req.body.education,
+						skills: req.body.skills,
+						rating: req.body.rating
+					};
+				case 'recruiter':
+					updatedUser = {
+						avatar: avatarPath,
+						name: req.body.name,
+						username: req.body.username,
+						password,
+						role: req.body.role,
+						bio: req.body.bio,
+						registrationDate: req.body.registrationDate
+					};
+			}
 			// remove '', null, undefined
 			Object.keys(updatedUser).forEach(
 				(k) =>
@@ -116,6 +133,7 @@ router.get('/:username', requireJwtAuth, async (req, res) => {
 	}
 });
 
+// get all users
 router.get('/', requireJwtAuth, async (req, res) => {
 	try {
 		const users = await User.find().sort({ createdAt: 'desc' });

@@ -8,7 +8,7 @@ import {
 	FormGroup,
 	Label,
 	Input,
-	FormText
+	Container
 } from 'reactstrap';
 
 import { useFormik } from 'formik';
@@ -42,8 +42,8 @@ const Login = ({ register, auth, history, loginUserWithEmail }) => {
 			: { display: 'none' };
 
 	return (
-		<div className="login container">
-			<div className="container">
+		<div className="login">
+			<Container>
 				<UncontrolledAlert color="success" style={display_alert}>
 					User registered successfully! You can login now or later as you
 					please.
@@ -94,9 +94,10 @@ const Login = ({ register, auth, history, loginUserWithEmail }) => {
 					</FormGroup>
 					{auth.error && <p className="error">{auth.error}</p>}
 					<Button
-						className="btn submit"
+						className="btn"
 						disabled={auth.isLoading || !formik.isValid}
 						type="submit"
+						color="primary"
 					>
 						Log in
 					</Button>
@@ -118,7 +119,7 @@ const Login = ({ register, auth, history, loginUserWithEmail }) => {
 						</Link>
 					</div>
 				</Form>
-			</div>
+			</Container>
 		</div>
 	);
 };

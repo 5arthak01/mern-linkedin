@@ -12,13 +12,23 @@ router.post('/login', requireLocalAuth, (req, res) => {
 });
 
 router.post('/register', async (req, res, next) => {
-	// check for valid email, password, name, username
 	const { error } = Joi.validate(req.body, registerSchema);
 	if (error) {
 		return res.status(400).send({ message: error.details[0].message });
 	}
 
-	const { email, password, name, username } = req.body;
+	const {
+		email,
+		password,
+		name,
+		username,
+		role,
+		education,
+		skills,
+		rating,
+		bio,
+		registrationDate
+	} = req.body;
 
 	try {
 		const existingUser = await User.findOne({ email });
@@ -27,14 +37,34 @@ router.post('/register', async (req, res, next) => {
 		}
 
 		try {
-			const newUser = new User({
-				provider: 'email',
-				email,
-				password,
-				username,
-				name,
-				avatar: `${process.env.IMAGES_FOLDER_PATH}avatar0.jpg`
-			});
+			var newUser = '';
+			switch (role) {
+				case 'applicant':
+					newUser = User({
+						provider: 'email',
+						email,
+						password,
+						username,
+						name,
+						role,
+						avatar: `${process.env.IMAGES_FOLDER_PATH}avatar0.jpg`,
+						education,
+						skills,
+						rating
+					});
+				case 'recruiter':
+					newUser = User({
+						provider: 'email',
+						email,
+						password,
+						username,
+						name,
+						role,
+						avatar: `${process.env.IMAGES_FOLDER_PATH}avatar0.jpg`,
+						bio,
+						registrationDate
+					});
+			}
 
 			newUser.registerUser(newUser, (err, user) => {
 				if (err) throw err;

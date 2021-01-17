@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import { Container } from 'reactstrap';
 import Navbar from '../components/Navbar/Navbar';
-import './styles.css';
 
 const Layout = ({ children }) => {
 	return (
 		<>
 			<Navbar />
-			<div className="container">{children}</div>
+			<br />
+			<Container>{children}</Container>
 		</>
 	);
 };
