@@ -1,3 +1,7 @@
+/**** 
+DEPRECATED 
+****/
+
 // User authentication by jwt token
 const jwt = require('jsonwebtoken');
 
