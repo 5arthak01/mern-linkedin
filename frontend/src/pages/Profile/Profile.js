@@ -16,7 +16,7 @@ import Loader from '../../components/Loader/Loader';
 import requireAuth from '../../hoc/requireAuth';
 import { profileSchema } from './validation';
 
-import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
 import './styles.css';
 
 const Profile = ({
@@ -95,7 +95,11 @@ const Profile = ({
 					<Loader />
 				) : (
 					<div className="profile-info">
-						<img src={image ? image : profile.avatar} className="avatar" />
+						<img
+							alt="avatar"
+							src={image ? image : profile.avatar}
+							className="avatar"
+						/>
 						<div className="info-container">
 							<div>
 								<span className="Label">Provider: </span>
