@@ -98,8 +98,8 @@ UserSchema.methods.toJSON = function () {
 	const avatar = isValidUrl(this.avatar)
 		? this.avatar
 		: fs.existsSync(absoluteAvatarFilePath)
-		? `${process.env.IMAGES_FOLDER_PATH}${this.avatar}`
-		: `${process.env.IMAGES_FOLDER_PATH}avatar0.jpg`;
+		? `${process.env.SERVER_URL}${process.env.IMAGES_FOLDER_PATH}${this.avatar}`
+		: `${process.env.SERVER_URL}${process.env.IMAGES_FOLDER_PATH}avatar0.jpg`;
 	// if profile picture does not exist, avatar0.jpg by default
 
 	if (this.role == 'applicant') {
@@ -180,10 +180,10 @@ async function hashPassword(password) {
 
 	return hashedPassword;
 }
-module.exports.hashedPassword = hashPassword;
+module.exports.hashPassword = hashPassword;
 
 const validateUser = (user) => {
-	const applicant_schema = {
+	const applicantSchema = {
 		avatar: Joi.any(),
 		name: Joi.string().min(2).max(30).required(),
 		username: Joi.string()
@@ -205,7 +205,7 @@ const validateUser = (user) => {
 		rating: Joi.number().min(0).max(5).optional
 	};
 
-	const recruiter_schema = {
+	const recruiterSchema = {
 		avatar: Joi.any(),
 		name: Joi.string().min(2).max(30).required(),
 		username: Joi.string()
@@ -220,11 +220,18 @@ const validateUser = (user) => {
 
 	switch (user.role) {
 		case 'applicant':
-			return Joi.validate(user, applicant_schema);
+			return Joi.validate(user, applicantSchema);
 		case 'recruiter':
-			return Joi.validate(user, recruiter_schema);
+			return Joi.validate(user, recruiterSchema);
 		default:
-			return false;
+			return [
+				{
+					message: 'Invalid "role"',
+					path: ['role'],
+					type: 'any.only',
+					context: { value: user.role, key: 'role', label: 'role' }
+				}
+			];
 	}
 };
 

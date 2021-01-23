@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import Layout from '../../layout/Layout';
+import JobList from '../../components/JobList/JobList';
+import JobForm from '../../components/JobForm/JobForm';
 
 const Home = ({ auth }) => {
 	return (
@@ -24,7 +26,13 @@ const Home = ({ auth }) => {
 						</p>
 					</div>
 				) : (
-					<></>
+					<>
+						<p>
+							Welcome <span className="name">{auth.me.name}</span>!
+						</p>
+						<JobForm />
+						{/* <JobList /> */}
+					</>
 				)}
 			</div>
 		</Layout>

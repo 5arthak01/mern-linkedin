@@ -28,7 +28,7 @@ export const loadMe = () => async (dispatch, getState) => {
 	} catch (err) {
 		dispatch({
 			type: ME_FAIL,
-			payload: { error: err.response.data.message }
+			payload: { error: err }
 		});
 	}
 };
@@ -51,7 +51,7 @@ export const loginUserWithEmail = (formData, history) => async (
 	} catch (err) {
 		dispatch({
 			type: LOGIN_WITH_EMAIL_FAIL,
-			payload: { error: err.response.data.message }
+			payload: { error: err }
 		});
 	}
 };
@@ -74,7 +74,7 @@ export const logInUserWithOauth = (token) => async (dispatch, getState) => {
 	} catch (err) {
 		dispatch({
 			type: LOGIN_WITH_OAUTH_FAIL,
-			payload: { error: err.response.data.message }
+			payload: { error: err }
 		});
 	}
 };

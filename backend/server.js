@@ -5,6 +5,7 @@ const passport = require('passport');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const PORT = process.env.PORT || 4000;
+const join = require('path').join;
 
 app.use(cors());
 app.use(express.json());
@@ -23,12 +24,14 @@ connection.once('open', function () {
 
 // routes
 var testAPIRouter = require('./routes/testAPI');
-var UserRouter = require('./routes/User');
-var authRouter = require('./routes/auth');
+// var UserRouter = require('./routes/User');
+var routes = require('./routes/');
 
-app.use('/', authRouter);
+app.use('/', routes);
 app.use('/testAPI', testAPIRouter);
-app.use('/user', UserRouter);
+// app.use('/user', UserRouter);
+// app.use('public', express.static('public'));
+app.use('public', express.static(join(__dirname, '../public')));
 
 // Setup passportjs authorisation
 app.use(passport.initialize());

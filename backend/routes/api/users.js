@@ -45,7 +45,6 @@ router.put(
 					.status(400)
 					.json({ message: 'You do not have privilegies to edit this user.' });
 
-			// validate name, username and password
 			const { error } = validateUser(req.body);
 			if (error)
 				return res.status(400).json({ message: error.details[0].message });
