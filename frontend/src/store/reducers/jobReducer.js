@@ -13,8 +13,11 @@ import {
 	EDIT_JOB_FAIL,
 	CLEAR_JOB_ERROR,
 	APPLY_JOB_LOADING,
+	APPLY_JOB_SUCCESS,
 	APPLY_JOB_FAIL,
-	APPLY_JOB_SUCCESS
+	FILTER_JOBS_LOADING,
+	FILTER_JOBS_SUCCESS,
+	FILTER_JOBS_FAIL
 } from '../types';
 
 const initialState = {
@@ -34,6 +37,11 @@ export default function (state = initialState, { type, payload }) {
 				isApplying: true
 			};
 		case GET_JOBS_LOADING:
+			return {
+				...state,
+				isLoading: true
+			};
+		case FILTER_JOBS_LOADING:
 			return {
 				...state,
 				isLoading: true
@@ -69,6 +77,13 @@ export default function (state = initialState, { type, payload }) {
 				...state,
 				isLoading: false,
 				jobs: payload.jobs
+			};
+		case FILTER_JOBS_SUCCESS:
+			return {
+				...state,
+				isLoading: false,
+				jobs: payload.jobs,
+				filtered: true
 			};
 		case ADD_JOB_SUCCESS:
 			return {
@@ -110,6 +125,12 @@ export default function (state = initialState, { type, payload }) {
 				error: payload.error
 			};
 		case GET_JOBS_FAIL:
+			return {
+				...state,
+				isLoading: false,
+				error: payload.error
+			};
+		case FILTER_JOBS_FAIL:
 			return {
 				...state,
 				isLoading: false,

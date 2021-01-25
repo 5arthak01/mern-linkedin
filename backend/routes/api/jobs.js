@@ -157,18 +157,112 @@ router.post('/apply', requireJwtAuth, async (req, res) => {
 
 		return res.status(201);
 	} catch (error) {
-		console.log(error);
+		res.status(500).json({ message: 'Something went wrong.' });
+	}
+});
+
+router.post('/filter', requireJwtAuth, async (req, res) => {
+	try {
+		const { formData } = req.body;
+
+		// Form validation
+		if (formData.searchbar && formData.searchbar.length > 100) {
+			return res.status(400).json({ message: 'Too large title search' });
+		} else if (
+			formData.jobType &&
+			!(
+				formData.jobType.fullTime ||
+				formData.jobType.partTime ||
+				formData.jobType.workFromHome
+			)
+		) {
+			return res.status(400).json({ message: 'No Job type was selected' });
+		} else if (formData.salary && formData.salary.min && formData.salary.max) {
+			if (
+				formData.salary.min < 0 ||
+				formData.salary.max < 0 ||
+				formData.salary.min > 100000000000000 ||
+				formData.salary.max > 100000000000000
+			) {
+				return res.status(400).json({
+					message: 'Please select a salary between 0 and 100000000000000'
+				});
+			} else if (formData.salary.min > formData.salary.max) {
+				return res.status(400).json({ message: 'Enter a valid salary filter' });
+			}
+		}
+
+		// Get all jobs
+		let jobs = await Job.find().sort({ createdAt: 'desc' });
+
+		// Filter on basis of form data
+		if (formData.searchbar != '') {
+			let newjobs = jobs.filter((job) => {
+				return job.title.toLowerCase().includes(searchbar.toLowerCase());
+			});
+			jobs = [...newjobs];
+		}
+
+		if (
+			formData.jobType &&
+			!(
+				formData.jobType.fullTime &&
+				formData.jobType.partTime &&
+				formData.jobType.workFromHome
+			)
+		) {
+			let newjobs = jobs.filter((job) => {
+				switch (job.jobType) {
+					case 'Full-time':
+						return formData.jobType.fullTime;
+					case 'Part-time':
+						return formData.jobType.partTime;
+					case 'Work-from-home':
+						return formData.jobType.workFromHome;
+				}
+			});
+			jobs = [...newjobs];
+		}
+
+		if (formData.salary && (formData.salary.min || formData.salary.max)) {
+			let min = formData.salary.min ? formData.salary.min : 0,
+				max = formData.salary.max ? formData.salary.max : 100000000000000;
+			let newjobs = jobs.filter((job) => {
+				return job.salary >= min && job.salary <= max;
+			});
+			jobs = [...newjobs];
+		}
+
+		if (formData.duration && formData.duration !== 0) {
+			let newjobs = jobs.filter((job) => {
+				return job.duration < formData.duration;
+			});
+			jobs = [...newjobs];
+		}
+
+		res.status(200).json({
+			jobs: jobs.map((job) => {
+				return job.toJSON();
+			})
+		});
+	} catch (err) {
 		res.status(500).json({ message: 'Something went wrong.' });
 	}
 });
 
 router.delete('/:id', requireJwtAuth, async (req, res) => {
 	try {
-		const tempJob = await Job.findById(req.params.id).populate('user');
-		if (!tempJob.user.id === req.user.id)
-			return res.status(400).json({ message: 'Not the job owner or admin.' });
+		const tempJob = await Job.findById(req.params.id);
+		if (!tempJob) {
+			return res.status(404).json({ message: 'Job not found' });
+		}
+		if (!tempJob.recruiterId === req.user.id) {
+			return res
+				.status(401)
+				.json({ message: 'User is not the job recruiter.' });
+		}
 
-		const job = await Job.findByIdAndRemove(req.params.id).populate('user');
+		const job = await Job.findByIdAndRemove(req.params.id);
 		if (!job) return res.status(404).json({ message: 'No job found.' });
 		res.status(200).json({ job });
 	} catch (err) {

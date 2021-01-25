@@ -71,6 +71,9 @@ const JobSchema = new Schema(
 		},
 		accepted: {
 			type: [String]
+		},
+		shortlisted: {
+			type: [String]
 		}
 	},
 	{
@@ -97,6 +100,7 @@ JobSchema.methods.toJSON = function () {
 		applicants: this.applicants,
 		rejected: this.rejected,
 		accepted: this.accepted,
+		shortlisted: this.accepted,
 		createdAt: this.createdAt,
 		updatedAt: this.updatedAt
 	};
@@ -129,7 +133,8 @@ const validateJob = (job) => {
 		rating: Joi.number().min(0).max(5).optional(),
 		applicants: Joi.array().items(Joi.string()).optional(),
 		rejected: Joi.array().items(Joi.string()).optional(),
-		accepted: Joi.array().items(Joi.string()).optional()
+		accepted: Joi.array().items(Joi.string()).optional(),
+		shortlisted: Joi.array().items(Joi.string()).optional()
 	};
 
 	return Joi.validate(job, schema);

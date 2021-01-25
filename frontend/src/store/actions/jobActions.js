@@ -17,7 +17,10 @@ import {
 	CLEAR_JOB_ERROR,
 	APPLY_JOB_LOADING,
 	APPLY_JOB_SUCCESS,
-	APPLY_JOB_FAIL
+	APPLY_JOB_FAIL,
+	FILTER_JOBS_FAIL,
+	FILTER_JOBS_LOADING,
+	FILTER_JOBS_SUCCESS
 } from '../types';
 
 export const getJobs = () => async (dispatch, getState) => {
@@ -35,6 +38,32 @@ export const getJobs = () => async (dispatch, getState) => {
 	} catch (err) {
 		dispatch({
 			type: GET_JOBS_FAIL,
+			payload: { error: err?.response?.data.job || err.job }
+		});
+	}
+};
+
+export const filterJobs = (formData) => async (dispatch, getState) => {
+	dispatch({
+		type: FILTER_JOBS_LOADING
+	});
+	try {
+		const options = attachTokenToHeaders(getState);
+		const payload = { formData };
+		const response = await axios.post(
+			SERVER_URI + '/api/jobs/filter',
+			payload,
+			options
+		);
+
+		dispatch({
+			type: FILTER_JOBS_SUCCESS,
+			payload: { jobs: response.data.jobs }
+		});
+	} catch (err) {
+		console.log(err);
+		dispatch({
+			type: FILTER_JOBS_FAIL,
 			payload: { error: err?.response?.data.job || err.job }
 		});
 	}
@@ -59,28 +88,6 @@ export const applyJob = (jobId, userId, SOP, userName, history) => async (
 			type: APPLY_JOB_SUCCESS
 		});
 		history.push(`/${userName}`);
-
-		// axios
-		// 	.post(`${SERVER_URI}/api/jobs/apply`, payload, options)
-		// 	.then((response) => {
-		// 		console.log(response);
-
-		// 		dispatch({
-		// 			type: APPLY_JOB_SUCCESS
-		// 		});
-		// 		history.push('/');
-		// 	})
-		// 	.catch((error) => {
-		// 		console.log(error.response);
-		// 		dispatch({
-		// 			type: APPLY_JOB_FAIL,
-		// 			payload: {
-		// 				error: error?.response?.data.job || error.job,
-		// 				jobId,
-		// 				userId
-		// 			}
-		// 		});
-		// 	});
 	} catch (err) {
 		console.log(err);
 		dispatch({

@@ -50,7 +50,7 @@ const JobApplicant = ({ job, auth, applyJob, history, key }) => {
 
 	return (
 		<>
-			<tr id={key}>
+			<tr key={key} id={job.id}>
 				<td>
 					{job.title} <i>({job.jobType})</i>
 				</td>
