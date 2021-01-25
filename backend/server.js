@@ -22,22 +22,23 @@ connection.once('open', function () {
 	console.log('MongoDB database connection established successfully !');
 });
 
-// routes
-var testAPIRouter = require('./routes/testAPI');
-// var UserRouter = require('./routes/User');
-var routes = require('./routes/');
-
-app.use('/', routes);
-app.use('/testAPI', testAPIRouter);
-// app.use('/user', UserRouter);
-// app.use('public', express.static('public'));
-app.use('public', express.static(join(__dirname, '../public')));
-
 // Setup passportjs authorisation
 app.use(passport.initialize());
 require('./services/jwtStrategy');
 require('./services/googleStrategy');
 require('./services/localStrategy');
+
+// routes
+var testAPIRouter = require('./routes/testAPI');
+var routes = require('./routes/');
+app.use('/', routes);
+app.use('/testAPI', testAPIRouter);
+/** DEPRECATED
+var UserRouter = require('./routes/User');
+app.use('/user', UserRouter);
+app.use('public', express.static('public'));
+ */
+app.use('public', express.static(join(__dirname, '../public')));
 
 app.listen(PORT, function () {
 	console.log('Server is running on Port: ' + PORT);

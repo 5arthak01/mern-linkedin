@@ -1,33 +1,44 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-
 import Job from '../Job/Job';
 import Loader from '../Loader/Loader';
-
 import { getJobs } from '../../store/actions/jobActions';
-
-// const JobList = ({ getJobs, job: { jobs, isLoading, error } }) => {
-const JobList = ({ getJobs, job }) => {
+import { Table, Form, FormGroup, Input, Button, Label } from 'reactstrap';
+const JobList = ({ getJobs, job: { jobs, isLoading, error } }) => {
 	useEffect(() => {
-		console.log('In Joblist use effect');
 		getJobs();
 	}, []);
 
 	return (
-		<div className="job-list">
+		<div className="List jobs">
+			<div></div>
+
 			<h2>Jobs:</h2>
-			{job.error && <div className="error-center">{job.error}</div>}
-			<div className="list">
-				{job.isLoading ? (
-					<Loader />
-				) : (
-					<>
-						{job.jobs.map((job, index) => {
-							return <Job key={index} job={job} />;
+			{error && <div className="error-center">{error}</div>}
+			{isLoading ? (
+				<Loader />
+			) : (
+				<Table bordered hover responsive>
+					<thead>
+						<tr>
+							<th>Title</th>
+							<th>Recruiter</th>
+							<th>Salary</th>
+							<th>Rating</th>
+							<th>Deadline</th>
+							<th>Required skills</th>
+							<th>Duration</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						{jobs.map((job, index) => {
+							return <Job key={job.id} job={job} />;
 						})}
-					</>
-				)}
-			</div>
+					</tbody>
+				</Table>
+			)}
 		</div>
 	);
 };

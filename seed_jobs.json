@@ -1,0 +1,11 @@
+{
+    "recruiterId": "600dbcb89044347f6473c4f3",
+    "title": "Front end dev at google",
+    "maxApplications": 10,
+    "maxPositions": 2,
+    "deadline": "2021-02-24T18:30:16.307Z",
+    "requiredSkills" : ["React", "JS"],
+    "jobType": "Full-time",
+    "duration": 5,
+    "salary": 100000
+}

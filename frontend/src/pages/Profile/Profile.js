@@ -79,7 +79,6 @@ const Profile = ({
 				formData.append('password', values.password);
 			}
 			editUser(values.id, formData, history);
-			//setIsEdit(false);
 		}
 	});
 

@@ -42,7 +42,7 @@ router.put(
 				return res.status(404).json({ message: 'User not found.' });
 			if (!(tempUser.id === req.user.id))
 				return res
-					.status(400)
+					.status(401)
 					.json({ message: 'You do not have privilegies to edit this user.' });
 
 			const { error } = validateUser(req.body);

@@ -30,8 +30,8 @@ const Home = ({ auth }) => {
 						<p>
 							Welcome <span className="name">{auth.me.name}</span>!
 						</p>
-						<JobForm />
-						{/* <JobList /> */}
+						{/* <JobForm /> */}
+						<JobList />
 					</>
 				)}
 			</div>

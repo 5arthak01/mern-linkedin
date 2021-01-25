@@ -7,81 +7,93 @@ const Joi = require('joi');
 const jwt = require('jsonwebtoken');
 
 // Create Schema
-const UserSchema = new Schema({
-	username: {
-		type: String,
-		unique: true,
-		required: [true, "can't be blank"],
-		match: [/^[a-zA-Z0-9_]+$/, 'is invalid'],
-		index: true
-	},
-	role: {
-		type: String,
-		enum: ['applicant', 'recruiter'],
-		required: true
-	},
-	name: {
-		type: String,
-		required: true
-	},
-	email: {
-		type: String,
-		required: true,
-		unique: true
-	},
-	avatar: { type: String }, // profile picture
-	password: {
-		type: String,
-		required: true,
-		minlength: 6,
-		maxlength: 60
-	},
-	registrationDate: {
-		type: Date,
-		default: Date.now
-	},
-	// Email or Google, authentication provider
-	provider: {
-		type: String,
-		required: true
-	},
-	googleId: {
-		type: String,
-		unique: true,
-		sparse: true
-	},
-	education: {
-		type: [
-			{
-				institute: { type: String, maxlength: 200 },
-				startYear: {
-					type: Number,
-					min: 1900,
-					max: 2022
-				},
-				endYear: {
-					type: Number,
-					required: false,
-					min: 1900,
-					max: 2030
+const UserSchema = new Schema(
+	{
+		username: {
+			type: String,
+			unique: true,
+			required: [true, "can't be blank"],
+			match: [/^[a-zA-Z0-9_]+$/, 'is invalid'],
+			index: true
+		},
+		role: {
+			type: String,
+			enum: ['applicant', 'recruiter'],
+			required: true
+		},
+		name: {
+			type: String,
+			required: true
+		},
+		email: {
+			type: String,
+			required: true,
+			unique: true
+		},
+		avatar: { type: String }, // profile picture
+		password: {
+			type: String,
+			required: true,
+			minlength: 6,
+			maxlength: 60
+		},
+		registrationDate: {
+			type: Date,
+			default: Date.now
+		},
+		// Email or Google, authentication provider
+		provider: {
+			type: String,
+			required: true
+		},
+		googleId: {
+			type: String,
+			unique: true,
+			sparse: true
+		},
+		education: {
+			type: [
+				{
+					institute: { type: String, maxlength: 200 },
+					startYear: {
+						type: Number,
+						min: 1900,
+						max: 2022
+					},
+					endYear: {
+						type: Number,
+						required: false,
+						min: 1900,
+						max: 2030
+					}
 				}
-			}
-		]
+			]
+		},
+		skills: {
+			type: [String]
+		},
+		rating: {
+			type: Number,
+			min: 0,
+			max: 5
+		},
+		bio: {
+			type: String,
+			default: '',
+			maxlength: 250
+		},
+		selected: {
+			type: Boolean,
+			default: false
+		},
+		jobs: {
+			type: [String]
+		}
 	},
-	skills: {
-		type: [String]
-	},
-	rating: {
-		type: Number,
-		min: 0,
-		max: 5
-	},
-	bio: {
-		type: String,
-		default: '',
-		maxlength: 250
+	{
+		timestamps: true
 	}
-});
+);
 
 UserSchema.methods.toJSON = function () {
 	const isValidUrl = (str) => {
@@ -114,6 +126,8 @@ UserSchema.methods.toJSON = function () {
 			education: this.education,
 			skills: this.skills,
 			rating: this.rating,
+			selected: this.selected,
+			jobs: this.jobs,
 			createdAt: this.createdAt,
 			updatedAt: this.updatedAt
 		};
@@ -194,7 +208,7 @@ const validateUser = (user) => {
 		password: Joi.string().min(6).max(20).allow('').allow(null),
 		education: Joi.array()
 			.items(
-				Joi.object.keys({
+				Joi.object().keys({
 					institute: Joi.string().max(200).required(),
 					startYear: Joi.number().min(1900).max(2021).required(),
 					endYear: Joi.number().min(1900).max(2030).optional

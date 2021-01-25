@@ -1,0 +1,32 @@
+[{
+	"email" : "sasa12@gmail.com",
+	"role":"applicant",
+	"password" : "qwerty",
+	"username" : "sasasasa12",
+	"name" : "sasasa",
+    "education" : [{
+        "institute" : "Not IIIT",
+        "startYear" : "2020"
+    }],
+    "skills" : ["CPP"]
+},
+{
+	"email" : "foobarbaz@gmail.com",
+	"role":"applicant",
+	"password" : "QWERTY",
+	"username" : "foofoo",
+	"name" : "notfoofoo",
+    "education" : [{
+        "institute" : "IITH",
+        "startYear" : "2019"
+    }],
+    "skills" : ["Python"]
+},
+{
+	"email" : "sugar@gmail.com",
+	"role":"recruiter",
+	"password" : "recruiterOP",
+	"username" : "recuiterGOD",
+	"name" : "foobar"
+}
+]

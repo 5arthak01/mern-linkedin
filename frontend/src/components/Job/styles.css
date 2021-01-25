@@ -16,14 +16,6 @@
 	border-bottom: 0;
 }
 
-.job .avatar {
-	width: 70px;
-	height: 70px;
-	object-fit: cover;
-	margin-right: 10px;
-	/* border-radius: 50%; */
-}
-
 .job .job-header {
 	display: flex;
 	align-content: flex-start;
@@ -32,9 +24,4 @@
 
 .job p {
 	margin: 0;
-}
-
-.job .btn {
-	width: auto;
-	margin-right: 10px;
 }

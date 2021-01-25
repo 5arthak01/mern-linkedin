@@ -1,7 +1,11 @@
 const Joi = require('joi');
 const User = require('../../models/User');
 const requireLocalAuth = require('../../middleware/requireLocalAuth');
-const registerSchema = require('../../services/validators').registerSchema;
+const {
+	registerSchema,
+	applicantSchema,
+	recruiterSchema
+} = require('../../services/validators');
 
 const router = require('express').Router();
 
@@ -12,9 +16,21 @@ router.post('/login', requireLocalAuth, (req, res) => {
 });
 
 router.post('/register', async (req, res, next) => {
-	const { error } = Joi.validate(req.body, registerSchema);
-	if (error) {
-		return res.status(400).send({ message: error.details[0].message });
+	if (req.body.role == 'applicant') {
+		let { error } = Joi.validate(req.body, applicantSchema);
+		if (error) {
+			return res.status(400).send({ message: error.details[0].message });
+		}
+	} else if (req.body.role == 'recruiter') {
+		let { error } = Joi.validate(req.body, recruiterSchema);
+		if (error) {
+			return res.status(400).send({ message: error.details[0].message });
+		}
+	} else {
+		return res.status(400).send({
+			message:
+				"An 'applicant' or 'recruiter' role is necessary for registration"
+		});
 	}
 
 	const {
@@ -68,7 +84,7 @@ router.post('/register', async (req, res, next) => {
 
 			newUser.registerUser(newUser, (err, user) => {
 				if (err) throw err;
-				res.status(200).json({ message: 'Registration successful.' }); // just redirect to login
+				res.status(200).json({ message: 'Registration successful.', newUser }); // just redirect to login
 			});
 		} catch (err) {
 			return next(err);

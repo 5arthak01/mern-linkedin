@@ -14,7 +14,10 @@ import {
 	EDIT_JOB_LOADING,
 	EDIT_JOB_SUCCESS,
 	EDIT_JOB_FAIL,
-	CLEAR_JOB_ERROR
+	CLEAR_JOB_ERROR,
+	APPLY_JOB_LOADING,
+	APPLY_JOB_SUCCESS,
+	APPLY_JOB_FAIL
 } from '../types';
 
 export const getJobs = () => async (dispatch, getState) => {
@@ -33,6 +36,56 @@ export const getJobs = () => async (dispatch, getState) => {
 		dispatch({
 			type: GET_JOBS_FAIL,
 			payload: { error: err?.response?.data.job || err.job }
+		});
+	}
+};
+
+export const applyJob = (jobId, userId, SOP, userName, history) => async (
+	dispatch,
+	getState
+) => {
+	dispatch({
+		type: APPLY_JOB_LOADING
+	});
+	try {
+		const payload = { jobId, userId, SOP };
+		const options = attachTokenToHeaders(getState);
+		const response = await axios.post(
+			`${SERVER_URI}/api/jobs/apply`,
+			payload,
+			options
+		);
+		dispatch({
+			type: APPLY_JOB_SUCCESS
+		});
+		history.push(`/${userName}`);
+
+		// axios
+		// 	.post(`${SERVER_URI}/api/jobs/apply`, payload, options)
+		// 	.then((response) => {
+		// 		console.log(response);
+
+		// 		dispatch({
+		// 			type: APPLY_JOB_SUCCESS
+		// 		});
+		// 		history.push('/');
+		// 	})
+		// 	.catch((error) => {
+		// 		console.log(error.response);
+		// 		dispatch({
+		// 			type: APPLY_JOB_FAIL,
+		// 			payload: {
+		// 				error: error?.response?.data.job || error.job,
+		// 				jobId,
+		// 				userId
+		// 			}
+		// 		});
+		// 	});
+	} catch (err) {
+		console.log(err);
+		dispatch({
+			type: APPLY_JOB_FAIL,
+			payload: { error: err?.response?.data.job || err.job, jobId, userId }
 		});
 	}
 };

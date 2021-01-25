@@ -11,7 +11,10 @@ import {
 	EDIT_JOB_LOADING,
 	EDIT_JOB_SUCCESS,
 	EDIT_JOB_FAIL,
-	CLEAR_JOB_ERROR
+	CLEAR_JOB_ERROR,
+	APPLY_JOB_LOADING,
+	APPLY_JOB_FAIL,
+	APPLY_JOB_SUCCESS
 } from '../types';
 
 const initialState = {
@@ -24,6 +27,12 @@ const initialState = {
 
 export default function (state = initialState, { type, payload }) {
 	switch (type) {
+		case APPLY_JOB_LOADING:
+			return {
+				...state,
+				isLoading: true,
+				isApplying: true
+			};
 		case GET_JOBS_LOADING:
 			return {
 				...state,
@@ -53,6 +62,8 @@ export default function (state = initialState, { type, payload }) {
 					return m;
 				})
 			};
+		case APPLY_JOB_SUCCESS:
+			return { ...state, isLoading: false, isApplying: false };
 		case GET_JOBS_SUCCESS:
 			return {
 				...state,
@@ -90,6 +101,13 @@ export default function (state = initialState, { type, payload }) {
 						return { ...m, isLoading: false, error: payload.error };
 					return m;
 				})
+			};
+		case APPLY_JOB_FAIL:
+			return {
+				...state,
+				isLoading: false,
+				isApplying: false,
+				error: payload.error
 			};
 		case GET_JOBS_FAIL:
 			return {
