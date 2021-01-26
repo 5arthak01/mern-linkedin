@@ -61,7 +61,6 @@ export const filterJobs = (formData) => async (dispatch, getState) => {
 			payload: { jobs: response.data.jobs }
 		});
 	} catch (err) {
-		console.log(err);
 		dispatch({
 			type: FILTER_JOBS_FAIL,
 			payload: { error: err?.response?.data.job || err.job }
